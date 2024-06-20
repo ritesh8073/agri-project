@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Recommendation</title>
+</head>
+<body>
+    <h1>Crop Recommendation</h1>
+    <form id="recommendation-form">
+        Latitude: <input type="text" id="latitude" name="latitude"><br>
+        Longitude: <input type="text" id="longitude" name="longitude"><br>
+        Nitrogen: <input type="text" id="nitrogen" name="nitrogen"><br>
+        Phosphorus: <input type="text" id="phosphorus" name="phosphorus"><br>
+        Potassium: <input type="text" id="potassium" name="potassium"><br>
+        <button type="button" onclick="submitForm()">Get Recommendation</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        function submitForm() {
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            const nitrogen = document.getElementById('nitrogen').value;
+            const phosphorus = document.getElementById('phosphorus').value;
+            const potassium = document.getElementById('potassium').value;
+
+            fetch('/recommend/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    latitude: latitude,
+                    longitude: longitude,
+                    nitrogen: nitrogen,
+                    phosphorus: phosphorus,
+                    potassium: potassium
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result').innerText = 'Error: ' + data.error + '\nDetails: ' + (data.details || '');
+                } else {
+                    document.getElementById('result').innerText = 'Temperature: ' + data.temperature + '\nRainfall: ' + data.rainfall + '\nRecommendation: ' + data.recommendation;
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = 'An error occurred: ' + error;
+            });
+        }
+    </script>
+</body>
+</html>
